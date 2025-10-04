@@ -63,8 +63,7 @@ require([
     <div style="margin-bottom: 10px;">
         <label for="modeSelect">Trip Type:</label>
         <select id="modeSelect" style="border: 1px solid #ccc">
-            <option value="internal">Internal Trips (Within Beaver County)</option>
-            <option value="external">External Trips (To Outside Areas)</option>
+            <option value="internal">Internal Trips (Greene County)
         </select>
     </div>
     <div style="margin-bottom: 10px;">
@@ -85,7 +84,7 @@ require([
         <label for="timeSelect">Time Period:</label>
         <select id="timeSelect" disabled style="border: ${selectedTime ? '1px solid #ccc' : '1px solid #ff6b6b'}">
             <option value="">Select Time</option>
-            <option value="ALL">All Times (6am-11pm)</option>
+            <option value="ALL">All Times (6am-9pm)</option>
             <option value="01: 6am (6am-7am)">6am-7am</option>
             <option value="02: 7am (7am-8am)">7am-8am</option>
             <option value="03: 8am (8am-9am)">8am-9am</option>
@@ -207,16 +206,16 @@ require([
     // Create feature layers
     const beaverCountyBG = new FeatureLayer({
         url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/0",
-        id: "BeaverCounty_BG",
+        id: "GreeneCounty_BG",
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
         renderer: tripsRenderer  // Apply the renderer here
     });
 
-    beaverCountyBG.when(() => {
-        console.log("BeaverCounty layer fields:", 
-            beaverCountyBG.fields.map(f => ({name: f.name, type: f.type}))
+    greeneCountyBG.when(() => {
+        console.log("GreeneCounty layer fields:", 
+            greeneCountyBG.fields.map(f => ({name: f.name, type: f.type}))
         );
     });
 
@@ -225,10 +224,7 @@ require([
         if (selectedMode === "internal") {
             // Internal trips (within Greene County)
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/9";
-        } else {
-            // External trips (Greene County to outside areas)
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/9";
-        }
+        } 
     }
 
     // Modify the OD table setup
@@ -247,7 +243,7 @@ require([
         );
     });
 
-    map.add(beaverCountyBG);
+    map.add(greeneCountyBG);
 
     // Update the legend configuration
     const legend = new Legend({
@@ -384,7 +380,7 @@ require([
         });
 
         // Update legend title
-        const modeText = selectedMode === "internal" ? "Within Beaver County" : "To External Areas";
+        const modeText = selectedMode === "internal" ? "Within Greene County";
         if (legendExpand && legendExpand.content) {
             legendExpand.content.layerInfos[0].title = `Number of Trips (${modeText})`;
         }
@@ -411,7 +407,7 @@ require([
         
         view.hitTest(event).then(function(response) {
             const result = response.results.find(r =>
-                r.graphic?.layer?.id === "BeaverCounty_BG"
+                r.graphic?.layer?.id === "GreeneCounty_BG"
             );
             if (!result) {
                 if (document.getElementById("sidePanel")) {
@@ -657,8 +653,7 @@ require([
         
         // Determine which mode is active for the header
         const modeTitle = selectedMode === "internal" ? 
-            "Internal Trips (Within Greene County)" : 
-            "External Trips (To Outside Areas)";
+            "Internal Trips (Within Greene County)";
         
         let content = `
             <div style="text-align: right;">
