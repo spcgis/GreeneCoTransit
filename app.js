@@ -204,7 +204,7 @@ require([
     map.add(blockGroupTripsLayer);
 
     // Create feature layers
-    const beaverCountyBG = new FeatureLayer({
+    const greeneCountyBG = new FeatureLayer({
         url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/0",
         id: "GreeneCounty_BG",
         outFields: ["*"],
