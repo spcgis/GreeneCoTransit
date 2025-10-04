@@ -205,7 +205,7 @@ require([
 
     // Create feature layers
     const beaverCountyBG = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/0",
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/0",
         id: "BeaverCounty_BG",
         outFields: ["*"],
         visible: true,
@@ -223,10 +223,10 @@ require([
     function getODTableURL() {
         if (selectedMode === "internal") {
             // Internal trips (within Beaver County)
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/7";
+            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/9";
         } else {
             // External trips (Beaver County to outside areas)
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/8";
+            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/9";
         }
     }
 
@@ -358,7 +358,7 @@ require([
         let whereClause;
         if (selectedDay === "0: All Days (M-Su)") {
             // Include all weekdays (1-6) as there's no pre-aggregated data
-            whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)')";
+            whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')";
         } else {
             // For specific days, use the selected day
             whereClause = `Day_Type = '${selectedDay}'`;
