@@ -14,7 +14,7 @@ require([
     const view = new MapView({
         container: "viewDiv",
         map: map,
-        center: [39.8959, -80.1803
+        center: [-80.1803, 39.8959 
 
 ], // Greene County coordinates
         zoom: 10
