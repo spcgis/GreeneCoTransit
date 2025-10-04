@@ -204,27 +204,30 @@ require([
     map.add(blockGroupTripsLayer);
 
     // Create feature layers
-    const greeneCountyBG = new FeatureLayer({
-        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/0",
-        id: "GreeneCounty_BG",
+    const beaverCountyBG = new FeatureLayer({
+        url: "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/0",
+        id: "BeaverCounty_BG",
         outFields: ["*"],
         visible: true,
         opacity: 0.7,
         renderer: tripsRenderer  // Apply the renderer here
     });
 
-    greeneCountyBG.when(() => {
-        console.log("GreeneCounty layer fields:", 
-            greeneCountyBG.fields.map(f => ({name: f.name, type: f.type}))
+    beaverCountyBG.when(() => {
+        console.log("BeaverCounty layer fields:", 
+            beaverCountyBG.fields.map(f => ({name: f.name, type: f.type}))
         );
     });
 
     // Modify the getODTableURL function to use different layers based on mode
     function getODTableURL() {
         if (selectedMode === "internal") {
-            // Internal trips (within Greene County)
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/9";
-        } 
+            // Internal trips (within Beaver County)
+            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/7";
+        } else {
+            // External trips (Beaver County to outside areas)
+            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/arcgis/rest/services/BeaverCounty_Including_External/FeatureServer/8";
+        }
     }
 
     // Modify the OD table setup
@@ -243,7 +246,7 @@ require([
         );
     });
 
-    map.add(greeneCountyBG);
+    map.add(beaverCountyBG);
 
     // Update the legend configuration
     const legend = new Legend({
@@ -355,7 +358,7 @@ require([
         let whereClause;
         if (selectedDay === "0: All Days (M-Su)") {
             // Include all weekdays (1-6) as there's no pre-aggregated data
-            whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')";
+            whereClause = "Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)')";
         } else {
             // For specific days, use the selected day
             whereClause = `Day_Type = '${selectedDay}'`;
@@ -380,7 +383,7 @@ require([
         });
 
         // Update legend title
-        const modeText = selectedMode === "internal" ? "Within Greene County";
+        const modeText = selectedMode === "internal" ? "Within Beaver County" : "To External Areas";
         if (legendExpand && legendExpand.content) {
             legendExpand.content.layerInfos[0].title = `Number of Trips (${modeText})`;
         }
@@ -407,7 +410,7 @@ require([
         
         view.hitTest(event).then(function(response) {
             const result = response.results.find(r =>
-                r.graphic?.layer?.id === "GreeneCounty_BG"
+                r.graphic?.layer?.id === "BeaverCounty_BG"
             );
             if (!result) {
                 if (document.getElementById("sidePanel")) {
@@ -451,10 +454,10 @@ require([
                 let whereClause;
                 if (selectedDay === "0: All Days (M-Su)") {
                     // Include all weekdays (1-6) as there's no pre-aggregated data
-                    whereClause = `Origin = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')`;
+                    whereClause = `Origin_ID_Text = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)')`;
                 } else {
                     // For specific days, use the selected day
-                    whereClause = `Origin = '${clickedBGId}' AND Day_Type = '${selectedDay}'`;
+                    whereClause = `Origin_ID_Text = '${clickedBGId}' AND Day_Type = '${selectedDay}'`;
                 }
                 
                 console.log("Query for ALL times:", whereClause);
@@ -462,7 +465,7 @@ require([
                 queryTable.load().then(() => {
                     return queryTable.queryFeatures({
                         where: whereClause,
-                        outFields: ["Destination", "Average_Daily_O_D_Traffic__StL_", "Day_Part", "Day_Type"],
+                        outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Day_Part", "Day_Type"],
                         returnGeometry: false
                     });
                 }).then(function(results) {
@@ -511,17 +514,17 @@ require([
                 let whereClause;
                 if (selectedDay === "0: All Days (M-Su)") {
                     // Include all weekdays (1-6) as there's no pre-aggregated data
-                    whereClause = `Origin = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)') AND Day_Part = '${selectedTime}'`;
+                    whereClause = `Origin_ID_Text = '${clickedBGId}' AND Day_Type IN ('1: Monday (M-M)', '2: Tuesday (Tu-Tu)', '3: Wednesday (W-W)', '4: Thursday (Th-Th)', '5: Friday (F-F)', '6: Saturday (Sa-Sa)', '7: Sunday (Su-Su)') AND Day_Part = '${selectedTime}'`;
                 } else {
                     // For specific days, use the selected day
-                    whereClause = `Origin = '${clickedBGId}' AND Day_Type = '${selectedDay}' AND Day_Part = '${selectedTime}'`;
+                    whereClause = `Origin_ID_Text = '${clickedBGId}' AND Day_Type = '${selectedDay}' AND Day_Part = '${selectedTime}'`;
                 }
                 
                 console.log("Query for specific time:", whereClause);
                 
                 const query = {
                     where: whereClause,
-                    outFields: ["Destination", "Average_Daily_O_D_Traffic__StL_", "Day_Type"],
+                    outFields: ["Destination_Zone_ID", "Average_Daily_O_D_Traffic__StL_", "Day_Type"],
                     returnGeometry: false
                 };
                 
@@ -550,7 +553,7 @@ require([
                     // Aggregate results by destination
                     const aggregatedTrips = {};
                     results.features.forEach(f => {
-                        const destId = f.attributes.Destination.toString();
+                        const destId = f.attributes.Destination_Zone_ID.toString();
                         const trips = f.attributes.Average_Daily_O_D_Traffic__StL_;
                         aggregatedTrips[destId] = (aggregatedTrips[destId] || 0) + trips;
                     });
@@ -587,11 +590,11 @@ require([
         }
 
         const originIds = Array.from(selectedOrigins).map(id => `'${id}'`).join(",");
-        const originQuery = greeneCountyBG.createQuery();
+        const originQuery = beaverCountyBG.createQuery();
         originQuery.where = `GEOID IN (${originIds})`;
         originQuery.outFields = ["GEOID"];
 
-        greeneCountyBG.queryFeatures(originQuery).then(function(originResults) {
+        beaverCountyBG.queryFeatures(originQuery).then(function(originResults) {
             // Calculate combined trips for all destinations
             let combinedTrips = {};
             Object.values(tripData).forEach(originData => {
@@ -604,14 +607,14 @@ require([
             updateSidePanel(originResults.features, combinedTrips);
 
             // Query and highlight destinations (no borders)
-            const destQuery = greeneCountyBG.createQuery();
+            const destQuery = beaverCountyBG.createQuery();
             const destIds = Object.keys(combinedTrips);
             if (destIds.length === 0) return;
 
             destQuery.where = `GEOID IN (${destIds.join(",")})`;
             destQuery.outFields = ["GEOID"];
 
-            greeneCountyBG.queryFeatures(destQuery).then(function(destResults) {
+            beaverCountyBG.queryFeatures(destQuery).then(function(destResults) {
                 // First, add all destinations with color fills but no borders
                 destResults.features.forEach(function(f) {
                     const destId = f.attributes.GEOID;
@@ -653,7 +656,8 @@ require([
         
         // Determine which mode is active for the header
         const modeTitle = selectedMode === "internal" ? 
-            "Internal Trips (Within Greene County)";
+            "Internal Trips (Within Beaver County)" : 
+            "External Trips (To Outside Areas)";
         
         let content = `
             <div style="text-align: right;">
@@ -705,7 +709,7 @@ require([
     view.on("pointer-move", function(event) {
         view.hitTest(event).then(function(response) {
             const result = response.results.find(r =>
-                r.graphic && r.graphic.layer && r.graphic.layer.id === "GreeneCounty_BG"
+                r.graphic && r.graphic.layer && r.graphic.layer.id === "BeaverCounty_BG"
             );
             
             if (!result) {
