@@ -224,10 +224,7 @@ require([
         if (selectedMode === "internal") {
             // Internal trips (within Greene County)
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/9";
-        } else {
-            // External trips (Beaver County to outside areas)
-            return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/9";
-        }
+        } 
     }
 
     // Modify the OD table setup
