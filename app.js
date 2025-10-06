@@ -222,7 +222,7 @@ require([
     // Modify the getODTableURL function to use different layers based on mode
     function getODTableURL() {
         if (selectedMode === "internal") {
-            // Internal trips (within Beaver County)
+            // Internal trips (within Greene County)
             return "https://services3.arcgis.com/MV5wh5WkCMqlwISp/ArcGIS/rest/services/Greene_County_ODs/FeatureServer/9";
         } else {
             // External trips (Beaver County to outside areas)
