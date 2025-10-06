@@ -653,7 +653,7 @@ require([
         
         // Determine which mode is active for the header
         const modeTitle = selectedMode === "internal" ? 
-            "Internal Trips (Within Beaver County)" : 
+            "Internal Trips (Within Greene County)" : 
             "External Trips (To Outside Areas)";
         
         let content = `
