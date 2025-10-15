@@ -112,7 +112,7 @@ require([
         field: "Average_Daily_O_D_Traffic__StL_",
         defaultSymbol: {
             type: "simple-fill",
-            color: [225, 225, 225, 0.6], // transparent for no trips
+            color: [180, 230, 180, 0.6], // transparent for no trips
             outline: { color: [0, 128, 0], width: 1 }
         },
         classBreakInfos: [
