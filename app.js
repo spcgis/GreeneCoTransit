@@ -70,7 +70,7 @@ require([
         <label for="daySelect">Day of Week:</label>
         <select id="daySelect" style="border: ${selectedDay ? '1px solid #ccc' : '1px solid #ff6b6b'}">
             <option value="">Select Day</option>
-            <option value="0: All Days (M-Su)">All (Mon-Sat)</option>
+            <option value="0: All Days (M-Su)">All (Mon-Sun)</option>
             <option value="1: Monday (M-M)">Monday</option>
             <option value="2: Tuesday (Tu-Tu)">Tuesday</option>
             <option value="3: Wednesday (W-W)">Wednesday</option>
